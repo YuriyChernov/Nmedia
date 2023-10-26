@@ -19,16 +19,26 @@ class MainActivity : AppCompatActivity() {
             likedByMe = false,
             likes = 999,
             share = 999,
-            views = 999
+            views = 999,
         )
 
         with(binding) {
+            fun convertNumbers(count: Int): String {
+                return when {
+                    count < 1000 -> count.toString()
+                    count < 10000 && count % 1000 == 0 -> count.toString()[0] + "К"
+                    count < 10000 -> count.toString()[0] + "." + count.toString()[1] + "К"
+                    count < 1000000 -> count.toString()[0] + "" + count.toString()[1] + "К"
+                    count < 10000000 -> count.toString()[0] + "." + count.toString()[1] + "M"
+                    else -> count.toString()[0] + "" + count.toString()[1] + "M"
+                }
+            }
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            likes.text = post.likes.toString()
-            share.text = post.share.toString()
-            views.text = post.views.toString()
+            likes.text = convertNumbers(post.likes)
+            share.text = convertNumbers(post.share)
+            views.text = convertNumbers(post.views)
 
             if (post.likedByMe) {
                 likesButton.setImageResource(R.drawable.ic_baseline_favorite_24)
@@ -38,52 +48,18 @@ class MainActivity : AppCompatActivity() {
                 post.likedByMe = !post.likedByMe
                 post.likes += if (post.likedByMe) 1 else -1
                 likesButton.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24)
-                likes.text = likesToK(post.likes)
+                likes.text = convertNumbers(post.likes)
             }
 
             shareButton.setOnClickListener {
                 post.share++
-                share.text = shareToK(post.share)
+                share.text = convertNumbers(post.share)
             }
 
             viewsButton.setOnClickListener {
                 post.views++
-                views.text = viewsToK(post.views)
+                views.text = convertNumbers(post.views)
             }
         }
     }
-
-    private fun likesToK(likes: Int): String {
-        return when {
-            likes < 1000 -> "$likes"
-            likes < 10000 && likes % 1000 == 0 -> likes.toString()[0] + "К"
-            likes < 10000 -> likes.toString()[0] + "." + likes.toString()[1] + "К"
-            likes < 1000000 -> likes.toString()[0] + "" + likes.toString()[1] + "К"
-            likes < 10000000 -> likes.toString()[0] + "." + likes.toString()[1] + "M"
-            else -> likes.toString()[0] + "" + likes.toString()[1] + "M"
-        }
-    }
-
-    private fun shareToK(share: Int): String {
-        return when {
-            share < 1000 -> "$share"
-            share < 10000 && share % 1000 == 0 -> share.toString()[0] + "К"
-            share < 10000 -> share.toString()[0] + "." + share.toString()[1] + "К"
-            share < 1000000 -> share.toString()[0] + "" + share.toString()[1] + "К"
-            share < 10000000 -> share.toString()[0] + "." + share.toString()[1] + "M"
-            else -> share.toString()[0] + "" + share.toString()[1] + "M"
-        }
-    }
-
-    private fun viewsToK(views: Int): String {
-        return when {
-            views < 1000 -> "$views"
-            views < 10000 && views % 1000 == 0 -> views.toString()[0] + "К"
-            views < 10000 -> views.toString()[0] + "." + views.toString()[1] + "К"
-            views < 1000000 -> views.toString()[0] + "" + views.toString()[1] + "К"
-            views < 10000000 -> views.toString()[0] + "." + views.toString()[1] + "M"
-            else -> views.toString()[0] + "" + views.toString()[1] + "M"
-        }
-    }
 }
-
